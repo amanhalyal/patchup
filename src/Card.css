@@ -1,0 +1,48 @@
+/* src/components/Card.css */
+
+.card {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #222;
+  padding: 20px;
+  border-radius: 10px;
+  width: 250px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  color: white;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.mic-icon {
+  width: 40px;
+  height: 40px;
+}
+
+.card-body {
+  margin-top: 10px;
+}
+
+.db-level {
+  font-size: 40px;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.card-info {
+  font-size: 16px;
+  margin: 5px 0;
+}
+
+.card-connected {
+  border: 2px solid green;
+}
+
+.card-disconnected {
+  border: 2px solid red;
+}
