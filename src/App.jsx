@@ -1,13 +1,27 @@
 import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Login from './components/Login';
 import Dashboard from './components/Dashboard';
-import './App.css';
+import PrivateRoute from './components/PrivateRoute';
+import Signup from './components/Signup'; // If you have this component
 
-const App = () => {
+function App() {
   return (
-    <div className="App">
-      <h1>PatchUp Dashboard</h1>
-      <Dashboard />
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route
+          path="/dashboard"
+          element={
+            <PrivateRoute>
+              <Dashboard />
+            </PrivateRoute>
+          }
+        />
+        <Route path="/signup" element={<Signup />} /> {/* If you have signup */}
+        <Route path="/" element={<Login />} />
+      </Routes>
+    </Router>
   );
 }
 

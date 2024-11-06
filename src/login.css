@@ -1,0 +1,82 @@
+/* login.css */
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #333;
+    color: white;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .login-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+  }
+  
+  .login-form {
+    background-color: #444;
+    padding: 40px;
+    border-radius: 8px;
+  }
+  
+  .login-form h1 {
+    margin-bottom: 30px;
+    text-align: center;
+  }
+  
+  .login-form label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+  }
+  
+  .login-form input[type="email"],
+  .login-form input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #777;
+    border-radius: 4px;
+    background-color: #555;
+    color: white;
+  }
+  
+  .login-form input::placeholder {
+    color: #ccc;
+  }
+  
+  .login-form button {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 50px; /* Makes the button circular */
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    background-color: #777; /* Default color */
+    color: white;
+  }
+  
+  .login-form button:disabled {
+    background-color: #777;
+    cursor: not-allowed;
+  }
+  
+  .login-form .signup-link {
+    margin-top: 20px;
+    text-align: center;
+  }
+  
+  .login-form .signup-link a {
+    color: #4caf50;
+    text-decoration: none;
+  }
+  
+  .login-form .signup-link a:hover {
+    text-decoration: underline;
+  }
+  

@@ -1,91 +1,95 @@
+// src/components/Dashboard.jsx
+
 import React, { useEffect, useState } from 'react';
-import Slot from './Slot';
-import '../Dashboard.css';
+import { auth } from '../firebase';
+import { useNavigate } from 'react-router-dom';
+import '../Dashboard.css'; // Import the CSS file
+import Slot from './Slot'; // Assuming you have a Slot component
 
-const Dashboard = () => {
-  const [channels, setChannels] = useState(
-    Array(48).fill({
-      name: '',
-      status: '',
-      attention: '',
-    })
-  );
-
+function Dashboard() {
+  const [channels, setChannels] = useState([]); // Initialize your channels state
   const [selectedSlot, setSelectedSlot] = useState(null);
+  const navigate = useNavigate();
 
-  const handleSlotClick = (slotNumber) => {
-    setSelectedSlot(slotNumber);
-  };
-
-  const handleOverlayClick = () => {
-    setSelectedSlot(null);
-  };
-
-  // Connect to WebSocket and update channels state
   useEffect(() => {
-    const ws = new WebSocket('ws://localhost:8080');
+    auth.currentUser.getIdToken(/* forceRefresh */ true).then((idToken) => {
+      const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      const wsUrl = `${wsProtocol}//localhost:8080/ws?token=${idToken}`;
+      const ws = new WebSocket(wsUrl);
 
-    ws.onmessage = (event) => {
-      const message = JSON.parse(event.data);
-      if (message.type === 'initialData') {
-        const initialData = message.data;
-        setChannels((prevChannels) => {
-          const updatedChannels = [...prevChannels];
-          Object.values(initialData).forEach((channelData) => {
-            updatedChannels[channelData.channelNumber - 1] = channelData;
+      ws.onopen = () => {
+        console.log('WebSocket connection opened');
+      };
+
+      ws.onmessage = (event) => {
+        const message = JSON.parse(event.data);
+        console.log('Received:', message);
+        // Update channels state with incoming data
+        if (message.type === 'initialData') {
+          setChannels(Object.values(message.data));
+        } else if (message.type === 'update') {
+          setChannels((prevChannels) => {
+            const updatedChannels = [...prevChannels];
+            const index = updatedChannels.findIndex(
+              (channel) => channel.channelNumber === message.data.channelNumber
+            );
+            if (index !== -1) {
+              updatedChannels[index] = message.data;
+            } else {
+              updatedChannels.push(message.data);
+            }
+            return updatedChannels;
           });
-          return updatedChannels;
-        });
-      } else if (message.type === 'update') {
-        const channelData = message.data;
-        setChannels((prevChannels) => {
-          const updatedChannels = [...prevChannels];
-          updatedChannels[channelData.channelNumber - 1] = channelData;
-          return updatedChannels;
-        });
-      }
-    };
+        }
+      };
 
-    return () => {
-      ws.close();
-    };
+      ws.onclose = () => {
+        console.log('WebSocket connection closed');
+      };
+
+      ws.onerror = (error) => {
+        console.error('WebSocket error:', error);
+      };
+
+      // Clean up on component unmount
+      return () => {
+        ws.close();
+      };
+    });
   }, []);
 
-  const selectedDevice = selectedSlot !== null ? channels[selectedSlot - 1] : null;
+  const handleLogout = () => {
+    auth.signOut().then(() => {
+      navigate('/login');
+    });
+  };
 
-  // Determine border color based on status for expanded card
-  const borderColor = selectedDevice?.status === 'On' ? 'green' : 'red';
+  const handleSlotClick = (slotNumber) => {
+    setSelectedSlot(slotNumber === selectedSlot ? null : slotNumber);
+  };
 
   return (
-    <div className="dashboard">
-      {/* Grid with slots */}
-      <div className={`grid-container ${selectedSlot ? 'blurred' : ''}`}>
-        {channels.map((channel, index) => (
-          <Slot
-            key={index + 1}
-            number={index + 1}
-            channelData={channel}
-            isSelected={selectedSlot === index + 1}
-            onClick={() => handleSlotClick(index + 1)}
-          />
-        ))}
-      </div>
-
-      {/* Only render the expanded card as an overlay */}
-      {selectedSlot && selectedDevice && (
-        <div className="card-overlay" onClick={handleOverlayClick}>
-          <div className="expanded-card" style={{ borderColor: borderColor }}>
-            <div className="db-level">
-              <span className="level-display">8.8</span> {/* Placeholder */}
-            </div>
-            <p className="card-info">{selectedDevice.name}</p>
-            <p className="card-info">Patch Name: {selectedDevice.attention}</p>
-            <p className="card-info">dB Level: XX</p> {/* Placeholder */}
-          </div>
+    <div className="dashboard-container">
+      <h1>Dashboard</h1>
+      <button className="logout-button" onClick={handleLogout}>
+        Logout
+      </button>
+      <div className="dashboard">
+        {/* Grid with slots */}
+        <div className={`grid-container ${selectedSlot ? 'blurred' : ''}`}>
+          {channels.map((channel, index) => (
+            <Slot
+              key={index + 1}
+              number={index + 1}
+              channelData={channel}
+              isSelected={selectedSlot === index + 1}
+              onClick={() => handleSlotClick(index + 1)}
+            />
+          ))}
         </div>
-      )}
+      </div>
     </div>
   );
-};
+}
 
 export default Dashboard;

@@ -91,3 +91,57 @@
   font-size: 16px;
   margin: 5px 0;
 }
+
+
+/* dashboard.css */
+
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #333;
+  color: white;
+  margin: 0;
+  padding: 0;
+}
+
+.dashboard-container {
+  padding: 20px;
+}
+
+.dashboard-container h1 {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.logout-button {
+  display: block;
+  margin: 0 auto 40px auto;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 50px; /* Makes the button circular */
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  background-color: #4caf50; /* Green color */
+  color: white;
+  transition: background-color 0.3s;
+}
+
+.logout-button:hover {
+  background-color: #45a049; /* Slightly darker green on hover */
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  grid-gap: 20px;
+}
+
+.blurred {
+  filter: blur(4px);
+}
+
+@media (max-width: 600px) {
+  .grid-container {
+    grid-template-columns: 1fr;
+  }
+}
